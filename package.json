@@ -1,21 +1,20 @@
 {
-  "name": "ai-agent-playground",
+  "name": "ai",
   "version": "1.0.0",
   "description": "AI Agent Playground using AI SDK",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "ai-agent": "./dist/cli/index.js",
+    "ai": "./dist/cli/index.js",
     "llm-gateway": "./dist/cli/index.js"
   },
   "scripts": {
     "build": "tsc && chmod +x dist/cli/index.js",
     "dev": "tsx watch server/src/cli/index.ts",
     "cli": "tsx server/src/cli/index.ts",
-    "weather": "npm run cli run weather",
     "test": "echo \"Error: no test specified\" && exit 1",
     "link": "npm run build && npm link",
-    "unlink": "npm unlink -g ai-agent-playground"
+    "unlink": "npm unlink -g ai"
   },
   "keywords": ["ai", "agents", "llm", "cli"],
   "author": "",

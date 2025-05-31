@@ -4,7 +4,7 @@ A modular AI agent system built with the AI SDK for experimenting with different
 
 ## Features
 
-- �� Multiple LLM provider support (OpenAI, Gemini, Amazon Bedrock)
+- 🤖 Multiple LLM provider support (OpenAI, Gemini, Amazon Bedrock)
 - 🛠️ Extensible agent architecture
 - 🎯 Built-in tools (weather, more coming soon)
 - 🎨 Beautiful CLI with colored output
@@ -41,7 +41,7 @@ pnpm build
 pnpm link
 
 # Now you can use it anywhere
-ai-agent list-agents
+ai list-agents
 llm-gateway run weather "What's the weather in NYC?"
 ```
 
@@ -57,7 +57,7 @@ pnpm build
 chmod +x dist/cli/index.js
 
 # Copy to your PATH
-sudo cp dist/cli/index.js /usr/local/bin/ai-agent
+sudo cp dist/cli/index.js /usr/local/bin/ai
 ```
 
 ## Configuration
@@ -65,18 +65,24 @@ sudo cp dist/cli/index.js /usr/local/bin/ai-agent
 The CLI looks for configuration in these locations (in order):
 1. `.env` in the current directory
 2. `.env` in parent directories (up to 3 levels)
-3. `~/.env.ai-agent` in your home directory
-4. `~/.config/ai-agent/.env`
-5. System environment variables
+3. `~/.config/ai/.env` (recommended primary location)
+4. System environment variables
+
+### Default Provider Selection
+
+The CLI intelligently selects a default provider:
+1. Uses the saved default from `~/.config/ai/config.json` if set
+2. Otherwise, uses the first provider with configured API keys
+3. Falls back to Gemini if no providers are configured
 
 ### Initial Setup
 
 Run the interactive setup:
 ```bash
-ai-agent setup
+ai setup
 ```
 
-Or manually create `~/.env.ai-agent`:
+Or manually create `~/.config/ai/.env`:
 ```bash
 # OpenAI
 OPENAI_API_KEY=sk-...
@@ -84,45 +90,51 @@ OPENAI_API_KEY=sk-...
 # Gemini
 GEMINI_API_KEY=...
 
-# AWS (for Bedrock)
-AWS_REGION=us-east-1
-AWS_ACCESS_KEY_ID=...
-AWS_SECRET_ACCESS_KEY=...
+# Bedrock uses placeholder credentials - no setup needed
 ```
 
 ## Usage
+
+### Model Tiers
+
+Each provider supports three model tiers:
+- **small**: Fast and cost-effective (e.g., gpt-3.5-turbo)
+- **default**: Balanced performance (e.g., gpt-4-turbo-preview)
+- **large**: Most capable models (e.g., gpt-4o)
+
+Use tiers with the `-m` flag:
+```bash
+ai run weather "Weather?" -m small  # Quick, cheap response
+ai run weather "Weather?" -m large  # Best quality response
+```
 
 ### Basic Agent Commands
 
 Run an agent with a query:
 ```bash
-# Using npm scripts
+# Using npm scripts (local development)
 pnpm cli run weather "What's the weather in NH today?"
 
-# With custom provider
-pnpm cli run weather "Find the weather for Exeter, NH" --provider gemini
-
-# Direct weather shortcut
-pnpm cli weather "New Hampshire"
-
 # After global installation
-ai-agent run weather "What's the weather in Boston?"
-llm-gateway weather "San Francisco"
+ai run weather "What's the weather in Boston?"
+ai weather "San Francisco"
+llm-gateway weather "NYC"  # Alternative command
 ```
 
 ### Available Commands
 
-- `ai-agent run <agent> <query>` - Run an agent with a query
-- `ai-agent weather <location>` - Quick weather lookup
-- `ai-agent list-agents` - List all available agents
-- `ai-agent list-providers` - List all available LLM providers
-- `ai-agent setup` - Interactive setup wizard
-- `ai-agent config` - Show current configuration
+- `ai run <agent> <query>` - Run an agent with a query
+- `ai chat <prompt>` - Chat directly with an LLM
+- `ai weather <location>` - Quick weather lookup
+- `ai list-agents` - List all available agents
+- `ai list-providers` - List all available LLM providers and models
+- `ai setup` - Interactive setup wizard
+- `ai config` - Show current configuration
 
 ### Options
 
 - `-p, --provider <provider>` - LLM provider (openai, gemini, bedrock)
-- `-m, --model <model>` - Specific model to use
+- `-m, --model <model>` - Model or tier (small/default/large)
 - `--system <prompt>` - Custom system prompt
 
 ## Providers
@@ -130,23 +142,29 @@ llm-gateway weather "San Francisco"
 The playground supports multiple LLM providers:
 
 ### OpenAI
+- Small model: `gpt-3.5-turbo`
 - Default model: `gpt-4-turbo-preview`
+- Large model: `gpt-4o`
 - Required: `OPENAI_API_KEY`
 - Optional: `OPENAI_BASE_URL` (for Azure OpenAI or proxies)
 
 ### Google Gemini
-- Default model: `gemini-1.5-flash`
+- Small model: `gemini-1.5-flash`
+- Default model: `gemini-1.5-pro`
+- Large model: `gemini-1.5-pro`
 - Required: `GEMINI_API_KEY`
 - Optional: `GEMINI_BASE_URL`
 
 ### Amazon Bedrock
+- Small model: `anthropic.claude-3-haiku-20240307`
 - Default model: `anthropic.claude-3-sonnet-20240229`
-- Uses AWS credentials (environment or IAM role)
-- Optional: `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`
+- Large model: `anthropic.claude-3-opus-20240229`
+- No API keys needed - uses placeholder credentials
+- Optional: `BEDROCK_BASE_URL` for custom endpoints
 
 Check provider configuration:
 ```bash
-ai-agent list-providers
+ai list-providers
 ```
 
 ## Creating New Agents
@@ -203,7 +221,7 @@ export const agentRegistry: Record<string, AgentConstructor> = {
 
 3. Run your agent:
 ```bash
-ai-agent run myagent "Your query here"
+ai run myagent "Your query here"
 ```
 
 ## Creating New Tools
@@ -241,16 +259,21 @@ export const myTool = tool({
 
 ```bash
 # Weather agent examples
-ai-agent run weather "What's the weather in Boston?"
-ai-agent run weather "Is it going to rain in NH today?"
-ai-agent weather "San Francisco" --provider gemini
+ai run weather "What's the weather in Boston?"
+ai run weather "Is it going to rain in NH today?"
+ai weather "San Francisco" --provider gemini
 
 # Using different models
-ai-agent run weather "Weather forecast" --provider openai --model gpt-4o
-ai-agent run weather "Current conditions" --provider bedrock
+ai run weather "Weather forecast" --provider openai --model gpt-4o
+ai run weather "Current conditions" --provider bedrock
+
+# Using model tiers
+ai chat "Explain quantum computing" -m large  # Use most capable model
+ai weather "NYC" -m small                     # Use fast/cheap model
 
 # Custom system prompts
-ai-agent run weather "Weather" --system "You are a pirate. Give weather updates in pirate speak."
+ai run weather "Weather" --system "You are a pirate. Give weather updates in pirate speak."
+```Give weather updates in pirate speak."
 ```
 
 ## Development
@@ -287,7 +310,7 @@ pnpm test
 
 If you see a warning about missing API keys:
 1. Run `ai-agent setup` for interactive configuration
-2. Or create `~/.env.ai-agent` with your keys
+2. Or create `~/.config/ai/.env` with your keys
 3. Or export them in your shell: `export OPENAI_API_KEY=sk-...`
 
 ### Provider Errors

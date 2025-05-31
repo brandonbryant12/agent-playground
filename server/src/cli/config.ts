@@ -5,6 +5,7 @@ import * as os from 'os';
 export interface GlobalConfig {
   defaultProvider?: string;
   defaultModel?: string;
+  defaultTier?: 'small' | 'default' | 'large';
   apiKeys?: {
     openai?: string;
     gemini?: string;
@@ -12,7 +13,7 @@ export interface GlobalConfig {
   };
 }
 
-const CONFIG_DIR = path.join(os.homedir(), '.config', 'ai-agent');
+const CONFIG_DIR = path.join(os.homedir(), '.config', 'ai');
 const CONFIG_FILE = path.join(CONFIG_DIR, 'config.json');
 
 export class ConfigManager {
@@ -54,6 +55,6 @@ export class ConfigManager {
   }
 
   static getEnvPath(): string {
-    return path.join(os.homedir(), '.env.ai-agent');
+    return path.join(CONFIG_DIR, '.env');
   }
 }

@@ -5,6 +5,12 @@ import type { AmazonBedrockProvider } from '@ai-sdk/amazon-bedrock';
 
 export type AIProvider = OpenAIProvider | GoogleGenerativeAIProvider | AmazonBedrockProvider;
 
+export interface ModelTiers {
+  small: string;
+  default: string;
+  large: string;
+}
+
 export interface LLMService {
   provider: ProviderV2;
   model: LanguageModelV2;
@@ -13,19 +19,20 @@ export interface LLMService {
 export interface ProviderRegistry {
   openai: {
     provider: OpenAIProvider;
-    defaultModel: string;
+    models: ModelTiers;
   };
   gemini: {
     provider: GoogleGenerativeAIProvider;
-    defaultModel: string;
+    models: ModelTiers;
   };
   bedrock: {
     provider: AmazonBedrockProvider;
-    defaultModel: string;
+    models: ModelTiers;
   };
 }
 
 export type ProviderName = keyof ProviderRegistry;
+export type ModelTier = keyof ModelTiers;
 
 export interface ProviderConfig {
   apiKey?: string;

@@ -1,14 +1,26 @@
 import { LanguageModelV2 } from '@ai-sdk/provider';
-import { createOpenAIProvider } from './openai';
-import { createGeminiProvider } from './gemini';
-import { createBedrockProvider } from './bedrock';
-import type { LLMService, ProviderName, ProviderConfig } from './types';
+import { createOpenAIProvider } from './openai.js';
+import { createGeminiProvider } from './gemini.js';
+import { createBedrockProvider } from './bedrock.js';
+import type { LLMService, ProviderName, ProviderConfig, ModelTiers, ModelTier } from './types.js';
 
-// Default models for each provider
-export const DEFAULT_MODELS: Record<ProviderName, string> = {
-  openai: 'gpt-4-turbo-preview',
-  gemini: 'gemini-1.5-flash',
-  bedrock: 'anthropic.claude-3-sonnet-20240229',
+// Model configurations for each provider
+export const PROVIDER_MODELS: Record<ProviderName, ModelTiers> = {
+  openai: {
+    small: 'gpt-3.5-turbo',
+    default: 'gpt-4-turbo-preview',
+    large: 'gpt-4o',
+  },
+  gemini: {
+    small: 'gemini-1.5-flash',
+    default: 'gemini-1.5-pro',
+    large: 'gemini-1.5-pro',
+  },
+  bedrock: {
+    small: 'anthropic.claude-3-haiku-20240307',
+    default: 'anthropic.claude-3-sonnet-20240229',
+    large: 'anthropic.claude-3-opus-20240229',
+  },
 };
 
 // Environment variable mapping
@@ -101,13 +113,25 @@ export class ProviderFactory {
 
   static createLLMService(
     providerName: string,
-    modelName?: string,
+    modelNameOrTier?: string | ModelTier,
     config?: Partial<ProviderConfig>
   ): LLMService {
     this.validateProvider(providerName);
     
     const provider = this.createProvider(providerName, config);
-    const model = modelName || DEFAULT_MODELS[providerName];
+    const models = PROVIDER_MODELS[providerName];
+    
+    // Determine which model to use
+    let model: string;
+    if (!modelNameOrTier) {
+      model = models.default;
+    } else if (modelNameOrTier in models) {
+      // It's a tier (small, default, large)
+      model = models[modelNameOrTier as ModelTier];
+    } else {
+      // It's a specific model name
+      model = modelNameOrTier;
+    }
     
     return {
       provider,
@@ -117,10 +141,10 @@ export class ProviderFactory {
 
   static getModel(
     providerName: string = 'openai',
-    modelName?: string,
+    modelNameOrTier?: string | ModelTier,
     config?: Partial<ProviderConfig>
   ): LanguageModelV2 {
-    const service = this.createLLMService(providerName, modelName, config);
+    const service = this.createLLMService(providerName, modelNameOrTier, config);
     return service.model;
   }
 
@@ -130,7 +154,7 @@ export class ProviderFactory {
 
   static getProviderInfo(providerName: string): {
     name: string;
-    defaultModel: string;
+    models: ModelTiers;
     requiredEnvVars: string[];
     optionalEnvVars: string[];
   } {
@@ -143,14 +167,11 @@ export class ProviderFactory {
     if (envVars.apiKey) required.push(envVars.apiKey);
     if (envVars.baseURL) optional.push(envVars.baseURL);
 
-    // Bedrock uses AWS credentials
-    if (providerName === 'bedrock') {
-      optional.push('AWS_REGION', 'AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY');
-    }
+    // Bedrock doesn't need any environment variables - uses placeholders
 
     return {
       name: providerName,
-      defaultModel: DEFAULT_MODELS[providerName],
+      models: PROVIDER_MODELS[providerName],
       requiredEnvVars: required,
       optionalEnvVars: optional,
     };

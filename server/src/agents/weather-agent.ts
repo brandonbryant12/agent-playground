@@ -1,6 +1,6 @@
 import { generateText } from 'ai';
-import { BaseAgent, AgentContext, AgentResult } from '../types/agent';
-import { weatherTool } from '../tools';
+import { BaseAgent, AgentContext, AgentResult } from '../types/agent.js';
+import { weatherTool } from '../tools/index.js';
 
 export class WeatherAgent extends BaseAgent {
   async execute(context: AgentContext): Promise<AgentResult> {
