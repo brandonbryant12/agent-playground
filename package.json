@@ -1,0 +1,50 @@
+{
+  "name": "ai-agent-playground",
+  "version": "1.0.0",
+  "description": "AI Agent Playground using AI SDK",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "ai-agent": "./dist/cli/index.js",
+    "llm-gateway": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc && chmod +x dist/cli/index.js",
+    "dev": "tsx watch server/src/cli/index.ts",
+    "cli": "tsx server/src/cli/index.ts",
+    "weather": "npm run cli run weather",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "link": "npm run build && npm link",
+    "unlink": "npm unlink -g ai-agent-playground"
+  },
+  "keywords": ["ai", "agents", "llm", "cli"],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.9.0",
+  "dependencies": {
+    "@ai-sdk/amazon-bedrock": "3.0.0-alpha.7",
+    "@ai-sdk/google": "2.0.0-alpha.4",
+    "@ai-sdk/openai": "2.0.0-alpha.4",
+    "@ai-sdk/provider": "2.0.0-alpha.4",
+    "@ai-sdk/provider-utils": "3.0.0-alpha.4",
+    "@tanstack/react-router": "^1.120.13",
+    "@tanstack/react-start": "^1.120.13",
+    "ai": "5.0.0-alpha.7",
+    "commander": "^12.0.0",
+    "dotenv": "^16.4.5",
+    "hono": "^4.7.10",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "vinxi": "^0.5.6",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "@vitejs/plugin-react": "^4.5.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.8.3",
+    "vite-tsconfig-paths": "^5.1.4"
+  }
+}
