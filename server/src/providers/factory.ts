@@ -2,7 +2,7 @@ import { LanguageModelV2 } from '@ai-sdk/provider';
 import { createOpenAIProvider } from './openai.js';
 import { createGeminiProvider } from './gemini.js';
 import { createBedrockProvider } from './bedrock.js';
-import type { LLMService, ProviderName, ProviderConfig, ModelTiers, ModelTier } from './types.js';
+import type { LLMService, ProviderName, ProviderConfig, ModelTiers, ModelTier, AIProvider } from './types.js';
 
 // Model configurations for each provider
 export const PROVIDER_MODELS: Record<ProviderName, ModelTiers> = {
@@ -70,7 +70,7 @@ export class ProviderFactory {
   static createProvider(
     providerName: string,
     config?: Partial<ProviderConfig>
-  ): LLMService['provider'] {
+  ): AIProvider {
     this.validateProvider(providerName);
     const providerConfig = this.getProviderConfig(providerName, config);
 
@@ -135,7 +135,7 @@ export class ProviderFactory {
     
     return {
       provider,
-      model: provider.languageModel(model),
+      model: provider.languageModel(model) as LanguageModelV2,
     };
   }
 

@@ -5,7 +5,6 @@ import { WeatherAgent } from './weather-agent.js';
 export { WeatherAgent } from './weather-agent.js';
 export { BaseAgent } from '../types/agent.js';
 
-// Agent registry for dynamic agent creation
 export type AgentConstructor = new (config: {
   name: string;
   description: string;
@@ -13,6 +12,7 @@ export type AgentConstructor = new (config: {
   systemPrompt?: string;
 }) => BaseAgent;
 
+// Agent registry for dynamic agent creation
 export const agentRegistry: Record<string, AgentConstructor> = {
   weather: WeatherAgent,
 };

@@ -1,6 +1,7 @@
 // Export types
 export * from './types.js';
 
+import { LanguageModel } from 'ai';
 // Import for internal use
 import { ProviderFactory } from './factory.js';
 
@@ -16,7 +17,7 @@ export { createBedrockProvider } from './bedrock.js';
 export function getModel(
   provider: string = 'openai',
   modelName?: string
-): import('@ai-sdk/provider').LanguageModelV2 {
+): LanguageModel {
   return ProviderFactory.getModel(provider, modelName);
 }
 

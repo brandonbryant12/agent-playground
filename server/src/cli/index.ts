@@ -78,6 +78,7 @@ program
       
       // Execute the agent
       const result = await agent.execute({ query });
+      console.dir(JSON.stringify(result, null, 2))
       
       if (result.success) {
         console.log(success('✅ Success!\n'));

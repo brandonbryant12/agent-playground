@@ -16,16 +16,21 @@
     "link": "npm run build && npm link",
     "unlink": "npm unlink -g ai"
   },
-  "keywords": ["ai", "agents", "llm", "cli"],
+  "keywords": [
+    "ai",
+    "agents",
+    "llm",
+    "cli"
+  ],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.9.0",
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "3.0.0-alpha.7",
-    "@ai-sdk/google": "2.0.0-alpha.4",
-    "@ai-sdk/openai": "2.0.0-alpha.4",
-    "@ai-sdk/provider": "2.0.0-alpha.4",
-    "@ai-sdk/provider-utils": "3.0.0-alpha.4",
+    "@ai-sdk/google": "2.0.0-alpha.7",
+    "@ai-sdk/openai": "2.0.0-alpha.7",
+    "@ai-sdk/provider": "2.0.0-alpha.7",
+    "@ai-sdk/provider-utils": "3.0.0-alpha.7",
     "@tanstack/react-router": "^1.120.13",
     "@tanstack/react-start": "^1.120.13",
     "ai": "5.0.0-alpha.7",

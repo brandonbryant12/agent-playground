@@ -1,4 +1,4 @@
-import { LanguageModelV2, ProviderV2 } from '@ai-sdk/provider';
+import { LanguageModelV2 } from '@ai-sdk/provider';
 import type { OpenAIProvider } from '@ai-sdk/openai';
 import type { GoogleGenerativeAIProvider } from '@ai-sdk/google';
 import type { AmazonBedrockProvider } from '@ai-sdk/amazon-bedrock';
@@ -12,7 +12,8 @@ export interface ModelTiers {
 }
 
 export interface LLMService {
-  provider: ProviderV2;
+  /** Underlying SDK provider instance (OpenAI, Gemini, Bedrock, …) */
+  provider: AIProvider;
   model: LanguageModelV2;
 }
 
