@@ -56,6 +56,7 @@ program
   .description('Run an agent with a query')
   .option('-p, --provider <provider>', 'LLM provider')
   .option('-m, --model <model>', 'Specific model to use or tier (small/default/large)')
+  .option('-t, --tools <tools>', 'Comma separated list of tools for multi agents')
   .option('--system <prompt>', 'Custom system prompt')
   .action(async (agentType: string, query: string, options) => {
     try {
@@ -69,8 +70,15 @@ program
       const model = ProviderFactory.getModel(provider, modelTier);
       
       // Create the agent
+      const toolNames = options.tools
+        ? String(options.tools)
+            .split(',')
+            .map((t: string) => t.trim())
+        : undefined;
+
       const agent = createAgent(agentType, model, {
         systemPrompt: options.system,
+        tools: toolNames,
       });
       
       console.log(`📝 Query: "${query}"`);
