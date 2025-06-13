@@ -248,6 +248,28 @@ export const myTool = tool({
 });
 ```
 
+### Combining Tools with Multi-Tool Agents
+
+Tools register themselves with a simple registry. You can mix and match them by
+using the `multi` agent and specifying which tools to enable:
+
+```typescript
+import { tool } from 'ai';
+import { registerTool } from './server/src/tools/registry.js';
+
+export const myTool = tool({
+  /* ... */
+});
+
+registerTool('myTool', myTool);
+```
+
+Run the multi agent with your chosen tools:
+
+```bash
+ai run multi "What's the weather in Boston?" --tools weather
+```
+
 ## Architecture
 
 - **Agents** - Encapsulate specific AI behaviors and tool usage
